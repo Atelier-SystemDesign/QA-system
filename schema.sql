@@ -10,56 +10,59 @@
 --
 -- ---
 
-DROP TABLE IF EXISTS `question`;
+DROP TABLE IF EXISTS question;
 
-CREATE TABLE `question` (
-  `product_id` INTEGER NULL DEFAULT NULL,
-  `question_id` INTEGER NULL AUTO_INCREMENT DEFAULT NULL,
-  `question_body` MEDIUMTEXT NULL DEFAULT NULL,
-  `question_date` DATE NULL DEFAULT NULL,
-  `asker_name` MEDIUMTEXT NULL DEFAULT NULL,
-  `question_helpfulness` INTEGER NULL DEFAULT NULL,
-  `reported` MEDIUMTEXT NULL DEFAULT NULL,
-  `product_id_question` INTEGER NULL DEFAULT NULL,
-  PRIMARY KEY (`product_id`, `question_id`)
+CREATE TABLE question (
+  id INT,
+  product_id INT,
+  body TEXT,
+  date_written BIGINT,
+  asker_name TEXT,
+  asker_email TEXT,
+  reported INT,
+  helpful INT,
+  PRIMARY KEY (id)
 );
 
 -- ---
--- Table 'answer'
+-- Table answer
 --
 -- ---
 
-DROP TABLE IF EXISTS `answer`;
+DROP TABLE IF EXISTS answer;
 
-CREATE TABLE `answer` (
-  `answer_id` INTEGER NULL AUTO_INCREMENT DEFAULT NULL,
-  `question_id` INTEGER NULL DEFAULT NULL,
-  `body` MEDIUMTEXT NULL DEFAULT NULL,
-  `date` DATE NULL DEFAULT NULL,
-  `answerer_name` MEDIUMTEXT NULL DEFAULT NULL,
-  `helpfulness` INTEGER NULL DEFAULT NULL,
-  `photos` INT NULL DEFAULT NULL,
-  PRIMARY KEY (`answer_id`, `question_id`)
+CREATE TABLE answer (
+  id INT,
+  question_id INT,
+  body TEXT,
+  date_written BIGINT,
+  answerer_name TEXT,
+  answerer_email TEXT NOT NULL,
+  reported INT,
+  helpful INTEGER NULL DEFAULT NULL,
+  PRIMARY KEY (id)
 );
 
 -- ---
--- Table 'products'
+-- Table photo
 --
 -- ---
 
-DROP TABLE IF EXISTS `products`;
+DROP TABLE IF EXISTS photo;
 
-CREATE TABLE `products` (
-  `product_id` INTEGER NULL DEFAULT NULL,
-  PRIMARY KEY (`product_id`)
+CREATE TABLE photo (
+  id INT,
+  answer_id INT,
+  url TEXT,
+  PRIMARY KEY (id)
 );
 
 -- ---
 -- Foreign Keys
 -- ---
 
-ALTER TABLE `question` ADD FOREIGN KEY (question_id) REFERENCES `answer` (`question_id`);
-ALTER TABLE `products` ADD FOREIGN KEY (product_id) REFERENCES `question` (`product_id`);
+ALTER TABLE answer ADD FOREIGN KEY (question_id) REFERENCES question (id);
+ALTER TABLE photo ADD FOREIGN KEY (answer_id) REFERENCES answer (id);
 
 -- ---
 -- Table Properties
@@ -67,15 +70,31 @@ ALTER TABLE `products` ADD FOREIGN KEY (product_id) REFERENCES `question` (`prod
 
 -- ALTER TABLE `question` ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 -- ALTER TABLE `answer` ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
--- ALTER TABLE `products` ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+-- ALTER TABLE `photo` ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- ---
 -- Test Data
 -- ---
 
--- INSERT INTO `question` (`product_id`,`question_id`,`question_body`,`question_date`,`asker_name`,`question_helpfulness`,`reported`,`product_id_question`) VALUES
--- ('','','','','','','','');
--- INSERT INTO `answer` (`answer_id`,`question_id`,`body`,`date`,`answerer_name`,`helpfulness`,`photos`) VALUES
--- ('','','','','','','');
--- INSERT INTO `products` (`product_id`) VALUES
--- ('');
+COPY question(id,product_id,body,date_written,asker_name,asker_email,reported,helpful)
+  FROM '/Users/oneill/hackreactor/repos/SDC/questions-answers-system/CSVfiles/questions.csv'
+  WITH(DELIMITER ',', FORMAT CSV, HEADER, NULL '');
+
+COPY answer(id,question_id,body,date_written,answerer_name,answerer_email,reported,helpful)
+  FROM '/Users/oneill/hackreactor/repos/SDC/questions-answers-system/CSVfiles/answers.csv'
+  WITH(DELIMITER ',', FORMAT CSV, HEADER, NULL '');
+
+COPY photo(id,answer_id,url)
+  FROM '/Users/oneill/hackreactor/repos/SDC/questions-answers-system/CSVfiles/answers_photos.csv'
+  WITH(DELIMITER ',', FORMAT CSV, HEADER, NULL '');
+
+-- INSERT INTO question (id, product_id, body, date_written, asker_name, asker_email, reported, helpful) VALUES
+-- ('', '', '', '', '', '', '', '');
+-- INSERT INTO answer (id, question_id, body, date_written, answerer_name, answerer_email, reported, helpful) VALUES
+-- ('', '', '', '', '', '', '');
+-- INSERT INTO photo (id, answer_id, url) VALUES
+-- ('', '', '');
+
+-- UPDATE answer
+-- SET answerer_name=''
+-- WHERE canswerer_name='null';
