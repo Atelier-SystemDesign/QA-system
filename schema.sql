@@ -34,12 +34,12 @@ DROP TABLE IF EXISTS answer;
 CREATE TABLE answer (
   id INT,
   question_id INT,
-  body TEXT,
-  date_written BIGINT,
+  answer_body TEXT,
+  answer_date_written BIGINT,
   answerer_name TEXT,
   answerer_email TEXT NOT NULL,
-  reported INT,
-  helpful INTEGER NULL DEFAULT NULL,
+  answer_reported INT,
+  answer_helpful INTEGER NULL DEFAULT NULL,
   PRIMARY KEY (id)
 );
 
