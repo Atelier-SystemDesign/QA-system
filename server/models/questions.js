@@ -37,7 +37,6 @@ module.exports = {
                 answer.id = photo.answer_id )
           )
         ) AS answers
-
       FROM
         question
       INNER JOIN answer ON question.id = answer.question_id
