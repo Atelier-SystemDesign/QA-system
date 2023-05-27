@@ -8,7 +8,7 @@ module.exports = {
 
       const questions = await models.questions.getQuestions(id, count, page);
       // const answers = await models.answers.getAnswers();
-      console.log('transform this question data', questions.rows[0].answers, questions.rows);
+      console.log('transform this question data', questions.rows[0].answers, questions.rows[0].answers[1].photos, questions.rows);
       const transformed = {
         product_id: questions.rows.product_id,
         results: [

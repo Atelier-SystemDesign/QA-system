@@ -22,14 +22,25 @@ module.exports = {
             'date', answer.answer_date_written,
             'answerer_name', answer.answerer_name,
             'reported', answer.answer_reported,
-            'helpfullness', answer_helpful
+            'helpfullness', answer.answer_helpful,
+            'photos', (
+              SELECT
+                JSON_AGG(
+                  JSON_BUILD_OBJECT(
+                    'answer_id', photo.answer_id,
+                    'url', photo.url
+                  )
+                )
+              FROM
+                photo
+              WHERE
+                answer.id = photo.answer_id )
           )
         ) AS answers
 
       FROM
         question
       INNER JOIN answer ON question.id = answer.question_id
-      JOIN photo ON answer.id = photo.answer_id
       WHERE
         product_id = $1
       GROUP BY
