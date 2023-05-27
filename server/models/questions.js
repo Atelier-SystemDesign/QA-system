@@ -1,9 +1,10 @@
 const db = require('../db/pg');
 
 module.exports = {
-  getQuestions: (id, count, page = 1) => {
-    const skip = (page - 1) * count;
-    console.log('number of rows to skip', skip);
+  getQuestions: (id, count = 5, page = 1) => {
+    let skip = (page - 1) * count;
+    console.log('number of a rows to skip', skip, 'page #', page, 'count: ', count);
+    if (Number.isNaN(skip)) { skip = 0; }
     return db.query(`
       SELECT
         question.id,
@@ -13,23 +14,26 @@ module.exports = {
         asker_name,
         reported,
         helpful,
-        ARRAY_AGG(
-          answer.id,
-          question_id,
-          answer_body,
-          answer_date_written,
-          answerer_name,
-          answer_reported,
-          answer_helpful
-          ORDER BY
-            answer.id
-        ) answers
+        JSON_AGG(
+          JSON_BUILD_OBJECT(
+            'question_id', answer.question_id,
+            'answer_id', answer.id,
+            'body', answer.answer_body,
+            'date', answer.answer_date_written,
+            'answerer_name', answer.answerer_name,
+            'reported', answer.answer_reported,
+            'helpfullness', answer_helpful
+          )
+        ) AS answers
+
       FROM
         question
-      INNER JOIN answer ON (question.id = question_id)
-      INNER JOIN photo ON (answer.id = answer_id)
+      INNER JOIN answer ON question.id = answer.question_id
+      JOIN photo ON answer.id = photo.answer_id
       WHERE
         product_id = $1
+      GROUP BY
+        question.id, question.product_id, question.body, question.date_written, question.asker_name, question.reported, question.helpful
       LIMIT $2
       OFFSET $3
     `, [id, count, skip]);

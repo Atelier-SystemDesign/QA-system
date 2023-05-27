@@ -7,8 +7,8 @@ module.exports = {
       console.log('what parameters we got, id:', id, 'count:', count, 'page:', page);
 
       const questions = await models.questions.getQuestions(id, count, page);
-      const answers = await models.answers.getAnswers();
-      console.log('transform this question data', questions.rows);
+      // const answers = await models.answers.getAnswers();
+      console.log('transform this question data', questions.rows[0].answers, questions.rows);
       const transformed = {
         product_id: questions.rows.product_id,
         results: [

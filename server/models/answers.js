@@ -1,7 +1,7 @@
 const db = require('../db/pg');
 
 module.exports = {
-  getAnswers: (id, count, page = 1) => {
+  getAnswers: (id, count = 5, page = 1) => {
     const skip = (page - 1) * count;
     console.log('number of rows to skip', skip);
     return db.query(`
