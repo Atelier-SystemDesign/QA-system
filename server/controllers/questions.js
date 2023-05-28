@@ -23,10 +23,11 @@ module.exports = {
 
   post: async (req, res) => {
     try {
-      const response = await models.questions.postQuestion();
+      console.log('post question req.body', req.body, 'req.params', req.params);
+      const response = await models.questions.postQuestion(req.body);
       console.log('question was posted', response);
 
-      res.send(response);
+      res.sendStatus(201);
     } catch (err) {
       console.log('questions controller post error', err.message);
       res.status(404).send('error at questions controller post');
@@ -35,10 +36,11 @@ module.exports = {
 
   putHelpful: async (req, res) => {
     try {
-      const response = await models.questions.helpfulQuestoin();
+      console.log('req.body', req.body, 'req.params', req.params);
+      const response = await models.questions.helpfulQuestion(req.params.question_id);
       console.log('question helpful updated', response);
 
-      res.send(response);
+      res.sendStatus(204);
     } catch (err) {
       console.log('questions controller helpful error', err.message);
       res.status(404).send('error at questions controller helpful');
@@ -47,7 +49,7 @@ module.exports = {
 
   putReport: async (req, res) => {
     try {
-      const response = await models.questions.reportQuestion();
+      const response = await models.questions.reportQuestion(req.params.question_id);
       console.log('question reported', response);
 
       res.send(response);

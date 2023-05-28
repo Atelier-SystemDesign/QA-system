@@ -21,7 +21,7 @@ CREATE TABLE question (
   asker_email TEXT,
   reported INT,
   question_helpfulness INT,
-  PRIMARY KEY (id)
+  PRIMARY KEY (question_id)
 );
 
 -- ---

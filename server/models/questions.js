@@ -28,7 +28,11 @@ module.exports = {
       FROM
         question
       INNER JOIN
-        answer ON question.question_id = answer.question_id
+          answer
+        ON
+          question.question_id = answer.question_id
+        AND
+          answer.answer_reported = 'f'
       LEFT JOIN(
         SELECT
           photo.answer_id,
@@ -39,7 +43,7 @@ module.exports = {
           photo.answer_id
       ) AS photos ON answer.answer_id = photos.answer_id
       WHERE
-        question.product_id = $1 AND question.reported = 0
+        question.product_id = $1 AND question.reported = 'f'
       GROUP BY
         question.question_id,
         question.question_body,
@@ -52,15 +56,37 @@ module.exports = {
     `, [id, count, skip]);
   },
 
-  postQuestions: (params) => db.query(`
-    INSERT INTO question(id, product_id, body, date_written, asker_name, asker_email, reported, helpful)
-  `, [...params]),
+  postQuestion: (data) => db.query(`
+    INSERT INTO question (
+      product_id,
+      question_body,
+      question_date,
+      asker_name,
+      asker_email,
+      reported,
+      question_helpfulness
+    )
+    VALUES (
+      $1, $2, CURRENT_TIMESTAMP, $3, $4, $5, $6
+    )
+  `, [data.product_id, data.body, data.name, data.email, false, 0]),
 
-  helpfulQuestion: () => db.query(`
+  helpfulQuestion: (questionId) => db.query(`
     UPDATE
-  `),
+      question
+    SET
+      question_helpfulness = question_helpfulness + 1
+    Where
+      question_id = $1
 
-  reportQuestion: () => db.query(`
+  `, [questionId]),
+
+  reportQuestion: (questionId) => db.query(`
     UPDATE
-  `),
+      question
+    SET
+      reported = true
+    Where
+      question_id = $1
+  `, [questionId]),
 };

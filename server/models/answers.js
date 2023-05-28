@@ -37,15 +37,36 @@ module.exports = {
     `, [id, count, skip]);
   },
 
-  postAnswer: () => db.query(`
-    INSERT INTO answer(id,)
-  `),
+  postAnswer: (data) => db.query(`
+  INSERT INTO answer (
+    question_id,
+    body,
+    date,
+    answerer_name,
+    answerer_email,
+    answer_reported,
+    helpfulness
+  )
+  VALUES (
+    $1, $2, CURRENT_TIMESTAMP, $3, $4, $5, $6
+  )
+`, [data.question_id, data.body, data.name, data.email, false, 0]),
 
-  helpfulAnswer: () => db.query(`
+  helpfulAnswer: (answerId) => db.query(`
     UPDATE
-  `),
+      answer
+    SET
+      helpfulness = helpfulness + 1
+    Where
+      answer_id = $1
+  `, [answerId]),
 
-  reportAnswer: () => db.query(`
+  reportAnswer: (answerId) => db.query(`
     UPDATE
-  `),
+      answer
+    SET
+      answer_reported = true
+    Where
+      answer_id = $1
+  `, [answerId]),
 };
