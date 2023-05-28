@@ -11,20 +11,27 @@ module.exports = {
         answer.date,
         answer.answerer_name,
         answer.helpfulness,
-        COALESCE(photo_urls, '[]'::json) AS photos
+        COALESCE(
+          (
+            SELECT
+              JSON_AGG(photo.url)
+            FROM
+              photo
+            WHERE
+              answer.answer_id = photo.answer_id
+          ),
+          '[]'::json
+        ) AS photos
       FROM
         answer
-      LEFT JOIN(
-        SELECT
-          photo.answer_id,
-          JSON_AGG(url) AS photo_urls
-        FROM
-          photo
-        GROUP BY
-          photo.answer_id
-      ) AS photos ON answer.answer_id::text = photos.answer_id::text
       WHERE
         answer.question_id = $1
+      GROUP BY
+        answer.answer_id,
+        answer.body,
+        answer.date,
+        answer.answerer_name,
+        answer.helpfulness
       LIMIT $2
       OFFSET $3
     `, [id, count, skip]);

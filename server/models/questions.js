@@ -39,7 +39,7 @@ module.exports = {
           photo.answer_id
       ) AS photos ON answer.answer_id = photos.answer_id
       WHERE
-        question.product_id = $1
+        question.product_id = $1 AND question.reported = 0
       GROUP BY
         question.question_id,
         question.question_body,

@@ -8,9 +8,14 @@ module.exports = {
       const id = req.params.question_id;
 
       const data = await models.answers.getAnswers(id, count, page);
-      console.log('transform this data', data.rows);
-
-      res.send(data.rows);
+      console.log('transform this data', data.rows, 'count:', count, 'page:', page);
+      const transformed = {
+        question: id,
+        page,
+        count,
+        results: data.rows,
+      };
+      res.send(transformed);
     } catch (err) {
       console.log('answers controller get error', err.message);
       res.status(404).send('error at answers controller get');
