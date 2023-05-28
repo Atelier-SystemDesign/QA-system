@@ -9,7 +9,7 @@ module.exports = {
       const questions = await models.questions.getQuestions(id, count, page);
       // const answers = await models.answers.getAnswers();
       console.log('transform this question data', questions.rows, questions.rows[0]);
-      console.log('product_id:', questions.rows[0].product_id);
+      console.log('product_id:', id);
       const transformed = {
         product_id: id,
         results: questions.rows,
@@ -24,8 +24,8 @@ module.exports = {
   post: async (req, res) => {
     try {
       console.log('post question req.body', req.body, 'req.params', req.params);
-      const response = await models.questions.postQuestion(req.body);
-      console.log('question was posted', response);
+      await models.questions.postQuestion(req.body);
+      console.log('question was posted');
 
       res.sendStatus(201);
     } catch (err) {

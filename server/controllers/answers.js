@@ -25,8 +25,8 @@ module.exports = {
   post: async (req, res) => {
     try {
       console.log('post answer req.body', req.body, 'req.params', req.params);
-      const response = await models.answers.postAnswer(req.body);
-      console.log('answer was posted', response);
+      await models.answers.postAnswer(req.body, req.params.question_id);
+      console.log('answer was posted');
 
       res.sendStatus(201);
     } catch (err) {

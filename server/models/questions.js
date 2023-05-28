@@ -31,19 +31,19 @@ module.exports = {
           answer
         ON
           question.question_id = answer.question_id
-        AND
-          answer.answer_reported = 'f'
+          AND answer.answer_reported = false
       LEFT JOIN(
         SELECT
           photo.answer_id,
-          JSON_AGG(url) AS photo_urls
+          COALESCE(JSON_AGG(url), '[]'::json) AS photo_urls
         FROM
           photo
         GROUP BY
           photo.answer_id
       ) AS photos ON answer.answer_id = photos.answer_id
       WHERE
-        question.product_id = $1 AND question.reported = 'f'
+        question.product_id = $1
+        AND question.reported = false
       GROUP BY
         question.question_id,
         question.question_body,
@@ -67,7 +67,7 @@ module.exports = {
       question_helpfulness
     )
     VALUES (
-      $1, $2, CURRENT_TIMESTAMP, $3, $4, $5, $6
+      $1, $2, CURRENT_TIMESTAMP(0), $3, $4, $5, $6
     )
   `, [data.product_id, data.body, data.name, data.email, false, 0]),
 
