@@ -7,43 +7,46 @@ module.exports = {
     if (Number.isNaN(skip)) { skip = 0; }
     return db.query(`
       SELECT
-        question.id,
-        product_id,
-        body,
-        date_written,
-        asker_name,
-        reported,
-        helpful,
-        JSON_AGG(
-          JSON_BUILD_OBJECT(
-            'question_id', answer.question_id,
-            'answer_id', answer.id,
-            'body', answer.answer_body,
-            'date', answer.answer_date_written,
-            'answerer_name', answer.answerer_name,
-            'reported', answer.answer_reported,
-            'helpfullness', answer.answer_helpful,
-            'photos', (
-              SELECT
-                JSON_AGG(
-                  JSON_BUILD_OBJECT(
-                    'answer_id', photo.answer_id,
-                    'url', photo.url
-                  )
-                )
-              FROM
-                photo
-              WHERE
-                answer.id = photo.answer_id )
+        question.question_id,
+        question.question_body,
+        question.question_date,
+        question.asker_name,
+        question.reported,
+        question.question_helpfulness,
+        (
+          JSON_OBJECT_AGG(
+            answer.answer_id, JSON_BUILD_OBJECT(
+              'id', answer.answer_id,
+              'body', answer.body,
+              'date', answer.date,
+              'answerer_name', answer.answerer_name,
+              'helpfullness', answer.helpfulness,
+              'photos', COALESCE(photo_urls, '[]'::json)
+            )
           )
         ) AS answers
       FROM
         question
-      INNER JOIN answer ON question.id = answer.question_id
+      INNER JOIN
+        answer ON question.question_id = answer.question_id
+      LEFT JOIN(
+        SELECT
+          photo.answer_id,
+          JSON_AGG(url) AS photo_urls
+        FROM
+          photo
+        GROUP BY
+          photo.answer_id
+      ) AS photos ON answer.answer_id = photos.answer_id
       WHERE
-        product_id = $1
+        question.product_id = $1
       GROUP BY
-        question.id, question.product_id, question.body, question.date_written, question.asker_name, question.reported, question.helpful
+        question.question_id,
+        question.question_body,
+        question.question_date,
+        question.asker_name,
+        question.reported,
+        question.question_helpfulness
       LIMIT $2
       OFFSET $3
     `, [id, count, skip]);

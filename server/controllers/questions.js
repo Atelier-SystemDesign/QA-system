@@ -8,20 +8,11 @@ module.exports = {
 
       const questions = await models.questions.getQuestions(id, count, page);
       // const answers = await models.answers.getAnswers();
-      console.log('transform this question data', questions.rows[0].answers, questions.rows[0].answers[1].photos, questions.rows);
+      console.log('transform this question data', questions.rows, questions.rows[0]);
+      console.log('product_id:', questions.rows[0].product_id);
       const transformed = {
-        product_id: questions.rows.product_id,
-        results: [
-          {
-            question_id: questions.rows.id,
-            question_body: questions.rows.body,
-            question_date: questions.rows.date_written,
-            asker_name: questions.rows.asker_name,
-            question_helpfulness: questions.rows.helpful,
-            reported: questions.rows.reported,
-            answers: {},
-          },
-        ],
+        product_id: id,
+        results: questions.rows,
       };
       res.send(transformed);
     } catch (err) {

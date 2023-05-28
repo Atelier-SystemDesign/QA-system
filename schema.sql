@@ -13,14 +13,14 @@
 DROP TABLE IF EXISTS question;
 
 CREATE TABLE question (
-  id INT,
+  question_id INT,
   product_id INT,
-  body TEXT,
-  date_written BIGINT,
+  question_body TEXT,
+  question_date BIGINT,
   asker_name TEXT,
   asker_email TEXT,
   reported INT,
-  helpful INT,
+  question_helpfulness INT,
   PRIMARY KEY (id)
 );
 
