@@ -3,7 +3,7 @@ const db = require('../db/pg');
 module.exports = {
   getAnswers: (id, count = 5, page = 1) => {
     const skip = (page - 1) * count;
-    console.log('number of rows to skip', skip);
+    // console.log('number of rows to skip', skip);
     return db.query(`
       SELECT
         answer.answer_id,
@@ -37,20 +37,33 @@ module.exports = {
     `, [id, count, skip]);
   },
 
-  postAnswer: (data, questionId) => db.query(`
-    INSERT INTO answer (
-      question_id,
-      body,
-      date,
-      answerer_name,
-      answerer_email,
-      answer_reported,
-      helpfulness
-    )
-    VALUES (
-      $1, $2, CURRENT_TIMESTAMP(0), $3, $4, $5, $6
-    )
-  `, [questionId, data.body, data.name, data.email, false, 0]),
+  postAnswer: (data, questionId) => {
+    db.query(`
+      WITH ins_one AS (
+        INSERT INTO answer (
+          question_id,
+          body,
+          date,
+          answerer_name,
+          answerer_email,
+          answer_reported,
+          helpfulness
+        )
+        VALUES (
+          $1, $2, CURRENT_TIMESTAMP(0), $3, $4, $5, $6
+        )
+        RETURNING answer_id
+      )
+      INSERT INTO photo (
+        answer_id,
+        url
+      )
+      SELECT
+        ins_one.answer_id, unnest(CAST($7 AS text[])) AS url
+      FROM
+        ins_one
+    `, [questionId, data.body, data.name, data.email, false, 0, data.photos]);
+  },
 
   helpfulAnswer: (answerId) => db.query(`
     UPDATE

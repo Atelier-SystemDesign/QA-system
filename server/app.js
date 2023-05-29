@@ -13,3 +13,5 @@ app.use('/', router);
 app.listen(process.env.EXPRESS_PORT, () => {
   console.log(`listening on port ${process.env.EXPRESS_PORT}`);
 });
+
+module.exports = app;
