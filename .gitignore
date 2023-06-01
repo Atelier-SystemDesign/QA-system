@@ -1,0 +1,9 @@
+.env
+node_modules/
+CSVfiles/
+
+build/
+dist/
+
+lib-cov
+coverage
