@@ -11,4 +11,6 @@ router.post('/qa/questions/:question_id/answers', controller.answers.post);
 router.put('/qa/answers/:answer_id/helpful', controller.answers.putHelpful);
 router.put('/qa/answers/:answer_id/report', controller.answers.putReport);
 
+router.get('/loaderio-d241ee2ee9ae0bd00202d308db929004', controller.loaderIO.get);
+
 module.exports = router;
