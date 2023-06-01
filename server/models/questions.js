@@ -1,4 +1,4 @@
-const db = require('../db/pg');
+const db = require('../../db/pg');
 
 module.exports = {
   getQuestions: (id, count = 5, page = 1) => {

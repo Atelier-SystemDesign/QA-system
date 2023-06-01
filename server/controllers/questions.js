@@ -3,12 +3,10 @@ const models = require('../models');
 module.exports = {
   get: async (req, res) => {
     try {
-      const { product_id: id, count, page } = req.query; // destructured req.query into variables
-      // console.log('what parameters we got, id:', id, 'count:', count, 'page:', page);
+      const { product_id: id, count, page } = req.query; // destructured
 
       const questions = await models.questions.getQuestions(id, count, page);
-      // console.log('transform this question data', questions.rows, questions.rows[0]);
-      // console.log('product_id:', id);
+
       const transformed = {
         product_id: id,
         results: questions.rows,
@@ -22,9 +20,7 @@ module.exports = {
 
   post: async (req, res) => {
     try {
-      // console.log('post question req.body', req.body, 'req.params', req.params);
       await models.questions.postQuestion(req.body);
-      // console.log('question was posted');
 
       res.sendStatus(201);
     } catch (err) {
@@ -35,9 +31,7 @@ module.exports = {
 
   putHelpful: async (req, res) => {
     try {
-      // console.log('req.body', req.body, 'req.params', req.params);
       await models.questions.helpfulQuestion(req.params.question_id);
-      // console.log('question helpful updated', response);
 
       res.sendStatus(204);
     } catch (err) {
@@ -49,7 +43,6 @@ module.exports = {
   putReport: async (req, res) => {
     try {
       await models.questions.reportQuestion(req.params.question_id);
-      // console.log('question reported', response);
 
       res.sendStatus(204);
     } catch (err) {

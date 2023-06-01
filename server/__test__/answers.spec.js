@@ -7,7 +7,6 @@ describe('Answers API tests', () => {
 
   it('Should respond with the proper data', async () => {
     const response = await agent.get('/qa/questions/1040/answers').expect(200);
-    // console.log('this is response', JSON.parse(response.text));
 
     expect(JSON.parse(response.text).question).toBe('1040');
   });
