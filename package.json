@@ -6,7 +6,8 @@
   "scripts": {
     "start-server": "nodemon ./server/app.js",
     "test": "jest",
-    "lint": "eslint --ext .jsx --ext .js ."
+    "lint": "eslint --ext .jsx --ext .js .",
+    "start": "node ./server/app.js"
   },
   "repository": {
     "type": "git",

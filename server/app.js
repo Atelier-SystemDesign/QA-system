@@ -10,8 +10,8 @@ app.use(cors());
 app.use(express.json());
 app.use('/', router);
 
-app.listen(process.env.EXPRESS_PORT, () => {
-  console.log(`listening on port ${process.env.EXPRESS_PORT}`);
+app.listen(process.env.SV_PORT, () => {
+  console.log(`listening on port ${process.env.SV_PORT}`);
 });
 
 module.exports = app;
